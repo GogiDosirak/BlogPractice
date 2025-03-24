@@ -1,10 +1,16 @@
 package com.sb02.blogpractice.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-public class Post {
+@Getter
+@Builder
+public class Post implements Serializable {
     private final UUID id;
     private String title;
     private String content;

@@ -1,9 +1,15 @@
 package com.sb02.blogpractice.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
-public class Image {
+@Getter
+@Builder
+public class Image implements Serializable {
     private final UUID id;
     private String originalName;
     private String extension;

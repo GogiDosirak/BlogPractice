@@ -1,8 +1,14 @@
 package com.sb02.blogpractice.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+
+import java.io.Serializable;
 import java.util.UUID;
 
-public class PostImage {
+@Getter
+@Builder
+public class PostImage implements Serializable {
     private final UUID id;
     private UUID postId;
     private UUID imageId;
