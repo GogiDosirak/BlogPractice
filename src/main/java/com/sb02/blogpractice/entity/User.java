@@ -9,7 +9,7 @@ public class User {
     private String nickname;
     private Instant createdAt;
 
-    public User(String id, String password, String email, String nickname, Instant createdAt) {
+    public User(String id, String password, String email, String nickname) {
         this.id = id;
         this.password = password;
         this.email = email;
