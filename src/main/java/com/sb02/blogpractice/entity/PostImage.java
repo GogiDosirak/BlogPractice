@@ -7,12 +7,12 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
-@Builder
 public class PostImage implements Serializable {
     private final UUID id;
     private UUID postId;
     private UUID imageId;
 
+    @Builder
     public PostImage(UUID postId, UUID imageId) {
         this.id = UUID.randomUUID();
         this.postId = postId;

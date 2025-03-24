@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Builder
 public class Post implements Serializable {
     private final UUID id;
     private String title;
@@ -19,6 +18,7 @@ public class Post implements Serializable {
     private Instant createdAt;
     private Instant updatedAt;
 
+    @Builder
     public Post(String title, String content, String authorId, List<String> tags) {
         this.id = UUID.randomUUID();
         this.title = title;

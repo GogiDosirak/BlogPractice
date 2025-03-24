@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@Builder
 public class Image implements Serializable {
     private final UUID id;
     private String originalName;
@@ -17,6 +16,7 @@ public class Image implements Serializable {
     private Long size;
     private Instant updatedAt;
 
+    @Builder
     public Image(String originalName, String extension, String path, Long sizet) {
         this.id = UUID.randomUUID();
         this.originalName = originalName;
