@@ -17,7 +17,7 @@ public class Image implements Serializable {
     private Instant updatedAt;
 
     @Builder
-    public Image(String originalName, String extension, String path, Long sizet) {
+    public Image(String originalName, String extension, String path, Long size) {
         this.id = UUID.randomUUID();
         this.originalName = originalName;
         this.extension = extension;
