@@ -10,6 +10,8 @@ import java.util.UUID;
 
 @Getter
 public class Post implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final UUID id;
     private String title;
     private String content;

@@ -9,6 +9,8 @@ import java.util.UUID;
 
 @Getter
 public class Image implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final UUID id;
     private String originalName;
     private String extension;

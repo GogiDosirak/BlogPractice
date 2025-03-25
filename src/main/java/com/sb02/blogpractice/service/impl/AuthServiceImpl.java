@@ -1,9 +1,10 @@
-package com.sb02.blogpractice.service;
+package com.sb02.blogpractice.service.impl;
 
 import com.sb02.blogpractice.dto.LoginParam;
 import com.sb02.blogpractice.dto.UserDTO;
 import com.sb02.blogpractice.entity.User;
-import com.sb02.blogpractice.jwt.JwtUtil;
+import com.sb02.blogpractice.service.AuthService;
+import com.sb02.blogpractice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;

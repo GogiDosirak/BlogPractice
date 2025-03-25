@@ -1,19 +1,20 @@
 package com.sb02.blogpractice.controller;
 
+import com.sb02.blogpractice.dto.CreatePostImageRequestDTO;
 import com.sb02.blogpractice.dto.ImageResponseDTO;
 import com.sb02.blogpractice.entity.Image;
+import com.sb02.blogpractice.entity.PostImage;
 import com.sb02.blogpractice.service.ImageService;
+import com.sb02.blogpractice.service.PostImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,11 +22,19 @@ import java.nio.file.Path;
 public class ImageController {
     private final ImageService imageService;
 
-    @PostMapping("/upload")
+    @PostMapping
     public ResponseEntity<ImageResponseDTO> upload(@RequestParam MultipartFile file) throws IOException {
         validateFile(file);
         Image image = imageService.upload(file);
-        ImageResponseDTO imageResponseDTO = imageToDTO(image);
+        ImageResponseDTO imageResponseDTO = entityToDTO(image);
+
+        return ResponseEntity.ok(imageResponseDTO);
+    }
+
+    @GetMapping("/{imageId}")
+    public ResponseEntity<ImageResponseDTO> getImage(@PathVariable("imageId") UUID id) {
+        Image image = imageService.findById(id);
+        ImageResponseDTO imageResponseDTO = entityToDTO(image);
 
         return ResponseEntity.ok(imageResponseDTO);
     }
@@ -44,7 +53,7 @@ public class ImageController {
         }
     }
 
-    private ImageResponseDTO imageToDTO(Image image) {
+    private ImageResponseDTO entityToDTO(Image image) {
         return new ImageResponseDTO(image.getId(), image.getPath());
     }
 

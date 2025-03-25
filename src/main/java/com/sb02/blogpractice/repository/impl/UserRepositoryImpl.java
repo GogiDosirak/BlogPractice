@@ -1,6 +1,8 @@
-package com.sb02.blogpractice.repository;
+package com.sb02.blogpractice.repository.impl;
 
 import com.sb02.blogpractice.entity.User;
+import com.sb02.blogpractice.repository.FileRepository;
+import com.sb02.blogpractice.repository.UserRepository;
 import com.sb02.blogpractice.util.SerializationUtil;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository, FileRepository<User>{
+public class UserRepositoryImpl implements UserRepository, FileRepository<User> {
     private final Path directory;
     private final Map<String, User> userMap;
 

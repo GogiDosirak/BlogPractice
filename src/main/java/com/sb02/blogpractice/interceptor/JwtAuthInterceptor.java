@@ -1,5 +1,6 @@
-package com.sb02.blogpractice.jwt;
+package com.sb02.blogpractice.interceptor;
 
+import com.sb02.blogpractice.jwt.JwtUtil;
 import com.sb02.blogpractice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

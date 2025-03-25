@@ -1,8 +1,8 @@
-package com.sb02.blogpractice.service;
+package com.sb02.blogpractice.service.impl;
 
 import com.sb02.blogpractice.entity.Image;
 import com.sb02.blogpractice.repository.ImageRepository;
-import lombok.RequiredArgsConstructor;
+import com.sb02.blogpractice.service.ImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -13,10 +13,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
-public class ImageServiceImpl implements ImageService{
+public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     String fileDir;
     Path savePath;
@@ -29,11 +30,22 @@ public class ImageServiceImpl implements ImageService{
 
 
     @Override
-    public Image upload(MultipartFile multipartFile) throws IOException {
-        File dest = saveImageFile(multipartFile);
+    public Image upload(MultipartFile multipartFile) {
+        File dest = null;
+        try {
+            dest = saveImageFile(multipartFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Image image = fileToImageEntity(multipartFile, dest);
         imageRepository.save(image);
         return image;
+    }
+
+    @Override
+    public Image findById(UUID id) {
+        return imageRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("image가 존재하지 않습니다."));
     }
 
     private File saveImageFile (MultipartFile multipartFile) throws IOException {

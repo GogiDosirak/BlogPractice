@@ -1,9 +1,10 @@
-package com.sb02.blogpractice.service;
+package com.sb02.blogpractice.service.impl;
 
-import com.sb02.blogpractice.dto.CreateRequestUserDTO;
+import com.sb02.blogpractice.dto.CreateUserRequestDTO;
 import com.sb02.blogpractice.dto.UserDTO;
 import com.sb02.blogpractice.entity.User;
 import com.sb02.blogpractice.repository.UserRepository;
+import com.sb02.blogpractice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,11 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements  UserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDTO create(CreateRequestUserDTO createRequestUserDTO) {
+    public UserDTO create(CreateUserRequestDTO createRequestUserDTO) {
         checkDuplicateId(createRequestUserDTO.id());
         User user = createUserEntity(createRequestUserDTO);
         userRepository.save(user);
@@ -42,7 +43,7 @@ public class UserServiceImpl implements  UserService {
     }
 
 
-    private User createUserEntity(CreateRequestUserDTO createRequestUserDTO) {
+    private User createUserEntity(CreateUserRequestDTO createRequestUserDTO) {
         String hashedPassword = BCrypt.hashpw(createRequestUserDTO.password(), BCrypt.gensalt());
         return User.builder()
                 .id(createRequestUserDTO.id())

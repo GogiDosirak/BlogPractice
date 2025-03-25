@@ -1,16 +1,19 @@
-package com.sb02.blogpractice.repository;
+package com.sb02.blogpractice.repository.impl;
 
 import com.sb02.blogpractice.entity.Image;
-import com.sb02.blogpractice.entity.User;
+import com.sb02.blogpractice.repository.FileRepository;
+import com.sb02.blogpractice.repository.ImageRepository;
 import com.sb02.blogpractice.util.SerializationUtil;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,6 +33,11 @@ public class ImageRepositoryImpl implements ImageRepository, FileRepository<Imag
         saveToFile(image);
         imageMap.put(image.getId(), image);
         return image;
+    }
+
+    @Override
+    public Optional<Image> findById(UUID id) {
+        return Optional.ofNullable(imageMap.get(id));
     }
 
     @Override

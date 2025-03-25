@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record CreateRequestUserDTO(
+public record CreateUserRequestDTO(
         @NotNull
         @Size(min = 6, max = 30)
         String id,
