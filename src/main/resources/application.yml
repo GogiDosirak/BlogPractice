@@ -1,0 +1,5 @@
+spring.application.name: BlogPractice
+
+BlogPractice:
+  service:
+    file-directory: data/imageFiles
