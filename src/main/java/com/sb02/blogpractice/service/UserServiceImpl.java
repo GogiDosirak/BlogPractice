@@ -3,17 +3,22 @@ package com.sb02.blogpractice.service;
 import com.sb02.blogpractice.dto.CreateRequestUserDTO;
 import com.sb02.blogpractice.dto.UserDTO;
 import com.sb02.blogpractice.entity.User;
+import com.sb02.blogpractice.exception.user.UserDuplicated;
+import com.sb02.blogpractice.exception.user.UserNotFound;
 import com.sb02.blogpractice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements  UserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public UserDTO create(CreateRequestUserDTO createRequestUserDTO) {
@@ -26,7 +31,11 @@ public class UserServiceImpl implements  UserService {
     @Override
     public User findById(String id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> {
+                    String errMessage = id + " 유저를 찾을 수 없습니다.";
+                    logger.error(errMessage);
+                    return new UserNotFound(errMessage);
+                });
         return user;
     }
 
@@ -36,8 +45,10 @@ public class UserServiceImpl implements  UserService {
     }
 
     private void checkDuplicateId(String id) {
-        if(existsById(id)) {
-            throw new IllegalStateException("중복된 아이디 입니다.");
+        if (existsById(id)) {
+            String errMessage = id + " 는 이미 존재하는 userId 입니다.";
+            logger.error(errMessage);
+            throw new UserDuplicated(errMessage);
         }
     }
 
