@@ -55,16 +55,7 @@ public class ImageCleanUpScheduler {
                     logger.warn("️이미지 파일을 찾을 수 없음: {}", imageFilePath);
                 }
 
-                // 직렬화된 Image 엔티티 파일 삭제 (data/image/{imageId}.ser)
-                Path serializedImagePath = Paths.get(System.getProperty("user.dir"), "data", "image", image.getId() + ".ser");
-                if (Files.exists(serializedImagePath)) {
-                    Files.delete(serializedImagePath);
-                    logger.info("삭제된 직렬화된 이미지 엔티티: {}", serializedImagePath);
-                } else {
-                    logger.warn("직렬화된 이미지 엔티티를 찾을 수 없음: {}", serializedImagePath);
-                }
-
-                // DB에서 이미지 정보 삭제
+                // 이미지 엔티티 직렬화 파일 + Map 메모리에서 삭제
                 imageRepository.deleteById(image.getId());
                 logger.info("삭제된 이미지 메타데이터: {}", image.getOriginalName());
 
