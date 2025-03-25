@@ -4,6 +4,8 @@ import com.sb02.blogpractice.dto.*;
 import com.sb02.blogpractice.entity.Post;
 import com.sb02.blogpractice.entity.PostImage;
 import com.sb02.blogpractice.entity.User;
+import com.sb02.blogpractice.exception.image.ImageNotFound;
+import com.sb02.blogpractice.service.ImageService;
 import com.sb02.blogpractice.service.PostImageService;
 import com.sb02.blogpractice.service.PostService;
 import com.sb02.blogpractice.service.UserService;
@@ -26,6 +28,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
+    private final ImageService imageService;
     private final PostImageService postImageService;
     private final UserService userService;
 
@@ -40,7 +43,14 @@ public class PostController {
 
         // 프론트단에서 Content에 업로드된 이미지를 포함해서 내려준다고 가정?
         extractImageIdsFromContent(createPostRequestDTO.content())
-                        .forEach(id -> postImageService.create(new CreatePostImageRequestDTO(post.getId(), id)));
+                        .forEach(id -> {
+                            // 내용의 이미지와 업로드된 이미지가 동일한지 확인 -> 예외 터지면 PostImage 만들지 않고 그냥 포스팅만 진행
+                            try {
+                                imageService.findById(id);
+                                postImageService.create(new CreatePostImageRequestDTO(post.getId(), id));
+                            } catch(ImageNotFound e) {
+                            }
+                        });
 
         return ResponseEntity.ok(postResponseDTO);
     }
@@ -93,7 +103,7 @@ public class PostController {
     private List<UUID> extractImageIdsFromContent(String content) {
         List<UUID> imageUUIDs = new ArrayList<>();
 
-        String uuidRegex = "\\{\\{([0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12})\\|[^}]+}}";
+        String uuidRegex = "\\{\\{([0-9a-fA-F-]+)\\|";
         Pattern pattern = Pattern.compile(uuidRegex);
         Matcher matcher = pattern.matcher(content);
 
@@ -101,6 +111,7 @@ public class PostController {
                 imageUUIDs.add(UUID.fromString(matcher.group(1)));
         }
 
+        System.out.println(imageUUIDs.get(0));
         return imageUUIDs;
     }
 
