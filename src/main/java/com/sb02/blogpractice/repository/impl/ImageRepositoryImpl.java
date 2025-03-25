@@ -26,6 +26,7 @@ public class ImageRepositoryImpl implements ImageRepository, FileRepository<Imag
         this.directory = Paths.get(System.getProperty("user.dir"), "data", "image");
         imageMap = new ConcurrentHashMap<>();
         SerializationUtil.init(directory);
+        loadCacheFromFile();
     }
 
     @Override

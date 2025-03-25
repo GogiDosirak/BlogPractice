@@ -6,10 +6,14 @@ import com.sb02.blogpractice.dto.PostResponseListDTO;
 import com.sb02.blogpractice.dto.UpdatePostRequestDTO;
 import com.sb02.blogpractice.entity.Post;
 import com.sb02.blogpractice.entity.User;
+import com.sb02.blogpractice.exception.post.PostNotFound;
+import com.sb02.blogpractice.exception.user.UserNotFound;
 import com.sb02.blogpractice.repository.PostRepository;
 import com.sb02.blogpractice.repository.UserRepository;
 import com.sb02.blogpractice.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,6 +23,7 @@ import java.util.*;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public Post create(CreatePostRequestDTO createRequestPostDTO, String userId) {
@@ -35,7 +40,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post findById(UUID id) {
         return postRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("게시물이 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    String errMessage = id + " 번 게시물이 존재하지 않습니다.";
+                    logger.error(errMessage);
+                    return new PostNotFound(errMessage);});
     }
 
     @Override
@@ -79,7 +87,11 @@ public class PostServiceImpl implements PostService {
 
     private PostResponseDTO entityToDTO(Post post) {
         User user = userRepository.findById(post.getAuthorId())
-                .orElseThrow(() -> new NoSuchElementException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> {
+                    String errMessage = post.getAuthorId() + " 유저를 찾을 수 없습니다.";
+                    logger.error(errMessage);
+                    return new UserNotFound(errMessage);
+                });
         return new PostResponseDTO(post.getId(), post.getTitle(), post.getContent(), post.getAuthorId(), user.getNickname(), post.getTags(), post.getCreatedAt());
     }
 }

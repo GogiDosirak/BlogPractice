@@ -1,8 +1,11 @@
 package com.sb02.blogpractice.service.impl;
 
 import com.sb02.blogpractice.entity.Image;
+import com.sb02.blogpractice.exception.image.ImageNotFound;
 import com.sb02.blogpractice.repository.ImageRepository;
 import com.sb02.blogpractice.service.ImageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,10 +22,11 @@ import java.util.UUID;
 @Service
 public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     String fileDir;
     Path savePath;
 
-    public ImageServiceImpl(ImageRepository imageRepository,  @Value("${BlogPractice.service.file-directory}") String fileDir) {
+    public ImageServiceImpl(ImageRepository imageRepository, @Value("${BlogPractice.service.file-directory}") String fileDir) {
         this.imageRepository = imageRepository;
         this.fileDir = fileDir;
         this.savePath = Paths.get(System.getProperty("user.dir"), fileDir);
@@ -45,7 +49,11 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Image findById(UUID id) {
         return imageRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("image가 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    String errMessage = id + "번 image가 존재하지 않습니다.";
+                    logger.error(errMessage);
+                    return new ImageNotFound(errMessage);
+                });
     }
 
     private File saveImageFile (MultipartFile multipartFile) throws IOException {
