@@ -54,9 +54,37 @@ public class PostController {
         return ResponseEntity.ok(postResponseListDTO);
     }
 
+    @GetMapping("/search/title")
+    public ResponseEntity<PostResponseSearchListDTO> findPostsByTitle(@RequestParam String keyword,
+                                                                      @RequestParam(defaultValue = "1") int page,
+                                                                      @RequestParam(defaultValue = "10") int size
+    ) {
+        PostResponseSearchListDTO postResponseSearchListDTO = postService.findByTitle(keyword, page, size);
+        return ResponseEntity.ok(postResponseSearchListDTO);
+    }
+
+    @GetMapping("/search/content")
+    public ResponseEntity<PostResponseSearchListDTO> findPostsByContent(@RequestParam String keyword,
+                                                                        @RequestParam(defaultValue = "1") int page,
+                                                                        @RequestParam(defaultValue = "10") int size
+    ) {
+        PostResponseSearchListDTO postResponseSearchListDTO = postService.findByContent(keyword, page, size);
+        return ResponseEntity.ok(postResponseSearchListDTO);
+    }
+
+    @GetMapping("/search/tag")
+    public ResponseEntity<PostResponseSearchListDTO> findPostsByTage(@RequestParam String tag,
+                                                                        @RequestParam(defaultValue = "1") int page,
+                                                                        @RequestParam(defaultValue = "10") int size
+    ) {
+        PostResponseSearchListDTO postResponseSearchListDTO = postService.findByTag(tag, page, size);
+        return ResponseEntity.ok(postResponseSearchListDTO);
+    }
+
+
     @PutMapping("/{postId}")
     public ResponseEntity<PostResponseDTO> updatePost(@PathVariable("postId") UUID id,
-                                                  @RequestBody UpdatePostRequestDTO updatePostRequestDTO) {
+                                                      @RequestBody UpdatePostRequestDTO updatePostRequestDTO) {
         // 작성자인지 확인은 PostAuthorizationInterceptor에서 진행
         Post post = postService.update(id, updatePostRequestDTO);
         return ResponseEntity.ok(entityToDTO(post));
@@ -67,7 +95,7 @@ public class PostController {
     public ResponseEntity<UUID> deletePost(@PathVariable("postId") UUID id) {
 
         // 작성자인지 확인은 PostAuthorizationInterceptor에서 진행
-       postService.deleteById(id);
+        postService.deleteById(id);
         return ResponseEntity.ok(id);
     }
 

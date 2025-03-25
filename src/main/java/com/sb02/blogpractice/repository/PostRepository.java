@@ -10,5 +10,8 @@ public interface PostRepository {
     Post save(Post post);
     Optional<Post> findById(UUID id);
     List<Post> findAll();
+    List<Post> findByTitle(String title);
+    List<Post> findByContent(String content);
+    List<Post> findByTag(String tag);
     UUID deleteById(UUID id);
 }

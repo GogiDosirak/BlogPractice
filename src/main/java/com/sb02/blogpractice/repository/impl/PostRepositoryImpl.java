@@ -46,6 +46,31 @@ public class PostRepositoryImpl implements PostRepository, FileRepository<Post> 
     }
 
     @Override
+    public List<Post> findByTitle(String title) {
+        String lowerTitle = title.toLowerCase();
+        return postMap.values().stream()
+                .filter(post -> post.getTitle().toLowerCase().contains(lowerTitle))
+                .toList();
+    }
+
+    @Override
+    public List<Post> findByContent(String content) {
+        String lowerContent = content.toLowerCase();
+        return postMap.values().stream()
+                .filter(post -> post.getContent().toLowerCase().contains(lowerContent))
+                .toList();
+    }
+
+    @Override
+    public List<Post> findByTag(String tag) {
+        String lowerTag = tag.toLowerCase();
+        return postMap.values().stream()
+                .filter(post -> post.getTags().stream()
+                        .anyMatch(t -> t.toLowerCase().contains(lowerTag)))
+                .toList();
+    }
+
+    @Override
     public UUID deleteById(UUID id) {
         deleteFileById(id);
         postMap.remove(id);

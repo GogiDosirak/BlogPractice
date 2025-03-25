@@ -75,6 +75,27 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostResponseSearchListDTO findByTitle(String title, int page, int size) {
+        List<Post> postList = new ArrayList<>(postRepository.findByTitle(title));
+        postList.sort((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()));
+        return postListToPageSearchDTO(postList, page, size, title);
+    }
+
+    @Override
+    public PostResponseSearchListDTO findByContent(String content, int page, int size) {
+        List<Post> postList = new ArrayList<>(postRepository.findByContent(content));
+        postList.sort((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()));
+        return postListToPageSearchDTO(postList, page, size, content);
+    }
+
+    @Override
+    public PostResponseSearchListDTO findByTag(String tag, int page, int size) {
+        List<Post> postList = new ArrayList<>(postRepository.findByTag(tag));
+        postList.sort((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()));
+        return postListToPageSearchDTO(postList, page, size, tag);
+    }
+
+    @Override
     public Post update(UUID id, UpdatePostRequestDTO updateRequestPostDTO) {
         Post post = findById(id);
         post.update(updateRequestPostDTO.title(), updateRequestPostDTO.content());
@@ -103,6 +124,24 @@ public class PostServiceImpl implements PostService {
         int totalPages = postList.size()%size == 0 ? postList.size()/size : postList.size()/size + 1;
 
         return new PostResponseListDTO(responseDTOList,totalPages,page);
+    }
+
+    private PostResponseSearchListDTO postListToPageSearchDTO(List<Post> postList, int page, int size, String keyword) {
+        int start = (page-1) * size;
+        int end = Math.min(start + size, postList.size());
+
+        if (start > postList.size()) {
+            return new PostResponseSearchListDTO(Collections.emptyList(),0,0, keyword);
+        }
+
+        List<Post> pagingPostList =  postList.subList(start, end);
+
+        List<PostResponseDTO> responseDTOList = pagingPostList.stream()
+                .map(post -> entityToDTO(post))
+                .toList();
+        int totalPages = postList.size()%size == 0 ? postList.size()/size : postList.size()/size + 1;
+
+        return new PostResponseSearchListDTO(responseDTOList,totalPages,page, keyword);
     }
 
 
