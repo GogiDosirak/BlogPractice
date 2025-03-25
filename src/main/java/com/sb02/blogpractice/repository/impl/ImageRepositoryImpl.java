@@ -42,6 +42,11 @@ public class ImageRepositoryImpl implements ImageRepository, FileRepository<Imag
     }
 
     @Override
+    public List<Image> findAll() {
+        return imageMap.values().stream().toList();
+    }
+
+    @Override
     public UUID deleteById(UUID id) {
         deleteFileById(id);
         imageMap.remove(id);

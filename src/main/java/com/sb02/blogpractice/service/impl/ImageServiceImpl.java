@@ -58,7 +58,7 @@ public class ImageServiceImpl implements ImageService {
 
     private File saveImageFile (MultipartFile multipartFile) throws IOException {
         String originalName = multipartFile.getOriginalFilename();
-        String uuidName = UUID.randomUUID() + "_" + originalName;;
+        String uuidName = UUID.randomUUID() + "_" + originalName;
 
         if (!Files.exists(savePath)) {
             Files.createDirectories(savePath);
