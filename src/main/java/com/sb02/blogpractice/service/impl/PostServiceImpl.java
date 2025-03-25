@@ -2,6 +2,7 @@ package com.sb02.blogpractice.service.impl;
 
 import com.sb02.blogpractice.dto.*;
 import com.sb02.blogpractice.entity.Post;
+import com.sb02.blogpractice.entity.PostImage;
 import com.sb02.blogpractice.entity.User;
 import com.sb02.blogpractice.exception.image.ImageNotFound;
 import com.sb02.blogpractice.exception.post.PostNotFound;
@@ -77,13 +78,51 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post update(UUID id, UpdatePostRequestDTO updateRequestPostDTO) {
         Post post = findById(id);
-        post.update(updateRequestPostDTO.title(), updateRequestPostDTO.content());
+        String newContent = updateRequestPostDTO.content();
+
+        // 기존에 사용된 이미지 ID 목록
+        List<UUID> oldImageIds = postImageService.findByPostId(id)
+                .stream()
+                .map(PostImage::getImageId)
+                .toList();
+
+        // 새로운 Content에서 이미지 ID 목록 추출
+        List<UUID> newImageIds = extractImageIdsFromContent(newContent);
+
+        // 추가된 이미지 처리
+        newImageIds.stream()
+                .filter(imageId -> !oldImageIds.contains(imageId)) // 기존에 없던 이미지만 추가
+                .forEach(imageId -> {
+                    try {
+                        imageRepository.findById(imageId)
+                                .orElseThrow(() -> {
+                                    String errMessage = imageId + "번 image가 존재하지 않습니다.";
+                                    logger.error(errMessage);
+                                    return new ImageNotFound(errMessage);
+                                });
+                        postImageService.create(new CreatePostImageRequestDTO(post.getId(), imageId));
+                    } catch (ImageNotFound e) {
+                        logger.warn("PostImage가 업로드되지 않았습니다.");
+                    }
+                });
+
+        // 삭제된 이미지 처리
+        oldImageIds.stream()
+                .filter(imageId -> !newImageIds.contains(imageId)) // 새로운 content에 없으면 삭제
+                .forEach(imageId -> {
+                    postImageService.deleteByPostIdAndImageId(id, imageId);
+                    imageRepository.deleteById(imageId);
+                });
+
+        // 게시물 업데이트 후 저장
+        post.update(updateRequestPostDTO.title(), newContent);
         return postRepository.save(post);
     }
 
     @Override
     public UUID deleteById(UUID id) {
         postRepository.deleteById(id);
+        postImageService.deleteByPostId(id);
         return id;
     }
 

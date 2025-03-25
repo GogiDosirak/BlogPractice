@@ -42,6 +42,13 @@ public class ImageRepositoryImpl implements ImageRepository, FileRepository<Imag
     }
 
     @Override
+    public UUID deleteById(UUID id) {
+        deleteFileById(id);
+        imageMap.remove(id);
+        return id;
+    }
+
+    @Override
     public void saveToFile(Image image) {
         Path filePath = directory.resolve(image.getId() + ".ser");
         SerializationUtil.init(directory);
