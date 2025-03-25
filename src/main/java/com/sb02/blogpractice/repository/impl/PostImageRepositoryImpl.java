@@ -36,10 +36,34 @@ public class PostImageRepositoryImpl implements PostImageRepository, FileReposit
     }
 
     @Override
+    public List<PostImage> findAll() {
+        return postImageMap.values().stream().toList();
+    }
+
+    @Override
+    public List<PostImage> findByPostId(UUID postId) {
+        return postImageMap.values().stream()
+                .filter(postImage -> postImage.getPostId().equals(postId))
+                .toList();
+    }
+
+    @Override
     public UUID deleteById(UUID id) {
         deleteFileById(id);
         postImageMap.remove(id);
         return id;
+    }
+
+    @Override
+    public void deleteByPostIdAndImageId(UUID postId, UUID imageId) {
+        List<PostImage> postImageList = findByPostId(postId);
+        postImageList.stream()
+                .filter(postImage -> postImage.getImageId().equals(imageId))
+                .forEach(postImage -> {
+                            deleteFileById(postImage.getId());
+                            postImageMap.remove(postImage.getId());
+                        }
+                );
     }
 
     @Override

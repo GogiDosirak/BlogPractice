@@ -7,6 +7,7 @@ import com.sb02.blogpractice.service.PostImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,9 +23,27 @@ public class PostImageServiceImpl implements PostImageService {
     }
 
     @Override
+    public List<PostImage> findByPostId(UUID postId) {
+        return postImageRepository.findByPostId(postId);
+    }
+
+    @Override
+    public void deleteByPostIdAndImageId(UUID postId, UUID imageId) {
+        postImageRepository.deleteByPostIdAndImageId(postId,imageId);
+    }
+
+    @Override
     public UUID deleteById(UUID id) {
         postImageRepository.deleteById(id);
         return id;
+    }
+
+    @Override
+    public void deleteByPostId(UUID postId) {
+        List<PostImage> postImageList = findByPostId(postId);
+        postImageList.forEach(postImage -> {
+            deleteByPostIdAndImageId(postId, postImage.getImageId());
+        });
     }
 
     private PostImage DTOToEntity(CreatePostImageRequestDTO createPostImageRequestDTO) {

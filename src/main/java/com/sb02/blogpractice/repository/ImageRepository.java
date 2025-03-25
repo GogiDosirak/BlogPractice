@@ -8,5 +8,5 @@ import java.util.UUID;
 public interface ImageRepository {
     Image save(Image image);
     Optional<Image> findById(UUID id);
-
+    UUID deleteById(UUID id);
 }
